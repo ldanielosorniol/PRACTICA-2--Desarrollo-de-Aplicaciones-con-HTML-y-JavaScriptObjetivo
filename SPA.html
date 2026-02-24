@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculadora de conversiones</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 300px; }
+        .oculto { display: none; }
+        input { display: block; margin: 10px 0; width: 100%; }
+        #resultado { font-weight: bold; color: green; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h3>Calculadora de Daniel Osornio</h3>
+
+    <select id="menu" onchange="mostrar()">
+        <option value="">Selecciona una opción</option>
+        <option value="triangulo">Área Triángulo</option>
+        <option value="esfera">Volumen Esfera</option>
+        <option value="divisas">Pesos a Dólares</option>
+    </select>
+
+    <div id="campos">
+        <input id="v1" class="oculto" type="number" placeholder="Base / Radio / Pesos">
+        <input id="v2" class="oculto" type="number" placeholder="Altura / Tipo Cambio">
+    </div>
+
+    <button onclick="calcular()">Calcular</button>
+    <button onclick="limpiar()">Borrar</button>
+
+    <div id="resultado"></div>
+    <div id="historial" style="color: gray; font-size: 12px; margin-top: 10px;"></div>
+
+    <script>
+
+        // Muestra u oculta los cuadros de texto
+        function mostrar() {
+            const op = document.getElementById("menu").value;
+            document.getElementById("v1").className = op ? "" : "oculto";
+            document.getElementById("v2").className = (op === "triangulo" || op === "divisas") ? "" : "oculto";
+        }
+
+        // Realiza el calculo segun la funcion que se seleccione
+        function calcular() {
+            const op = document.getElementById("menu").value;
+            const n1 = parseFloat(document.getElementById("v1").value);
+            const n2 = parseFloat(document.getElementById("v2").value);
+            let res = 0;
+
+            if (n1 <= 0 || (document.getElementById("v2").className === "" && n2 <= 0)) {
+                alert("Ingresa números mayores a cero");
+                return;
+            }
+
+            if (op === "triangulo") res = (n1 * n2) / 2;
+            if (op === "esfera") res = (4/3) * Math.PI * Math.pow(n1, 3);
+            if (op === "divisas") res = n1 / n2;
+
+            const texto = "Resultado: " + res.toFixed(2);
+            document.getElementById("resultado").innerText = texto;
+            
+            // Guardar 
+            localStorage.setItem("ultimo", texto);
+            mostrarHistorial();
+        }
+
+        function limpiar() {
+            document.getElementById("v1").value = "";
+            document.getElementById("v2").value = "";
+            document.getElementById("resultado").innerText = "";
+        }
+
+        function mostrarHistorial() {
+            const h = localStorage.getItem("ultimo");
+            if (h) document.getElementById("historial").innerText = "Último: " + h;
+        }
+
+        window.onload = mostrarHistorial;
+    </script>
+
+</body>
+</html>
