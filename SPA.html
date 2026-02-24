@@ -1,82 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Calculadora de conversiones</title>
+    <title>Calculadoras</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 300px; }
+        Body { 
+            font-family: Arial;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+        }
         .oculto { display: none; }
-        input { display: block; margin: 10px 0; width: 100%; }
-        #resultado { font-weight: bold; color: green; margin-top: 10px; }
     </style>
 </head>
 <body>
+    <h1> Calculadoras de Daniel Osornio </h1>
 
-    <h3>Calculadora de Daniel Osornio</h3>
-
-    <select id="menu" onchange="mostrar()">
-        <option value="">Selecciona una opción</option>
-        <option value="triangulo">Área Triángulo</option>
-        <option value="esfera">Volumen Esfera</option>
-        <option value="divisas">Pesos a Dólares</option>
+    <select id="menu">
+        <option value="triangulo">Area de Triangulo</option>
+        <option value="esfera">Volumen de Esfera</option>
+        <option value="divisas">Pesos a Dolares</option>
     </select>
 
-    <div id="campos">
-        <input id="v1" class="oculto" type="number" placeholder="Base / Radio / Pesos">
-        <input id="v2" class="oculto" type="number" placeholder="Altura / Tipo Cambio">
-    </div>
+    <input type="number" id="num1" placeholder="Base o Radio">
+    <input type="number" id="num2" placeholder="Altura">
 
-    <button onclick="calcular()">Calcular</button>
-    <button onclick="limpiar()">Borrar</button>
+    <button onclick="miCerebro()">Calcular</button>
+    <p id="Resultado">Resultado aparecera aqui</p>
 
-    <div id="resultado"></div>
-    <div id="historial" style="color: gray; font-size: 12px; margin-top: 10px;"></div>
+    <Script>
+        function miCerebro() {       
+            // Se toman los numeros de los inputs
 
-    <script>
+            let n1 = parseFloat(document.getElementById("num1").value);
+            let n2 = parseFloat(document.getElementById("num2").value);
 
-        // Muestra u oculta los cuadros de texto
-        function mostrar() {
-            const op = document.getElementById("menu").value;
-            document.getElementById("v1").className = op ? "" : "oculto";
-            document.getElementById("v2").className = (op === "triangulo" || op === "divisas") ? "" : "oculto";
-        }
+            // Se toma la operacion que eligio el usuario
+            let opcion = document.getElementById("menu").value;
 
-        // Realiza el calculo segun la funcion que se seleccione
-        function calcular() {
-            const op = document.getElementById("menu").value;
-            const n1 = parseFloat(document.getElementById("v1").value);
-            const n2 = parseFloat(document.getElementById("v2").value);
-            let res = 0;
+            let calculo = 0;
 
-            if (n1 <= 0 || (document.getElementById("v2").className === "" && n2 <= 0)) {
-                alert("Ingresa números mayores a cero");
+            // Validacion para que el usuario no deje vacio el campo o ponga un numero negativo
+            if (isNaN(n1) || n1 <= 0) {
+                alert("Por favor ingresa un numero valido para el primer campo");
                 return;
+            }     
+
+            // Si es triangulo se aplca esta formula
+            if (opcion === "triangulo") {
+                calculo = (n1 * n2) / 2;
             }
+            // Este es para la esfera
+            if (opcion ===  "esfera") {
+                calculo = (4/3) * Math.PI * Math.pow(n1, 3);
+            }
+            // Divisas 
+            if (opcion === "divisas") {
 
-            if (op === "triangulo") res = (n1 * n2) / 2;
-            if (op === "esfera") res = (4/3) * Math.PI * Math.pow(n1, 3);
-            if (op === "divisas") res = n1 / n2;
+                //n los pesos y n2 el dolar
+                calculo = n1 / n2;
+            }
+        // Pone el resultado en donde dice resultado
+            document.getElementById("Resultado").innerText = "El resultado es: " + calculo;
+         // Guarda el resultado del ultimo calculo en el local storage
+        // el local storage es una forma de guardar datos en el navegador del usuario 
+            localStorage.setItem("ultimoCalculo", calculo.toFixed(2));
 
-            const texto = "Resultado: " + res.toFixed(2);
-            document.getElementById("resultado").innerText = texto;
-            
-            // Guardar 
-            localStorage.setItem("ultimo", texto);
-            mostrarHistorial();
         }
 
-        function limpiar() {
-            document.getElementById("v1").value = "";
-            document.getElementById("v2").value = "";
-            document.getElementById("resultado").innerText = "";
-        }
-
-        function mostrarHistorial() {
-            const h = localStorage.getItem("ultimo");
-            if (h) document.getElementById("historial").innerText = "Último: " + h;
-        }
-
-        window.onload = mostrarHistorial;
-    </script>
-
+        window.onload = function() {
+            let guardado = localStorage.getItem("ultimoCalculo");
+                if (guardado) {
+                 document.getElementById("Resultado").innerText = "Ultimo resultado guardado: " + guardado;
+                    }
+                }
+    </Script>
+    
 </body>
 </html>
